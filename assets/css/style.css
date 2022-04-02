@@ -41,5 +41,21 @@ header{
 margin: 2%;
 
 }
+.container-2{
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    margin: 2%;
+    padding: 3%;
+    /* padding-bottom: 1%; */
+
+}
+.display-current{
+border-style: solid;
+height: 350px;
+width: 100%;
+
+
+}
 
 

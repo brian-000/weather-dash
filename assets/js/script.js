@@ -4,10 +4,13 @@ var apiUrl2;
 var cityName;
 var date;
 var temp;
+var div;
 var humidity;
 var windspeed;
 var weatherIcon;
 var uvIndex;
+var myArray = [];
+var testing = 0;
 {/* <h3 id="temp">Temp:</h3>
 <h3 id="wind">Wind:</h3>
 <h3 id="humidity">Humidity:</h3>
@@ -17,13 +20,29 @@ var htmlWind = document.querySelector('#wind');
 var htmlHumidity = document.querySelector('#humidity');
 var htmlUv = document.querySelector('#uv');
 var myCity = document.querySelector('#myCity');
-var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=hong kong&appid=6665733097ff1de29ed2779c3bf3ce43";
+var displayFuture = document.querySelector('#display-future');
+var submitBtn = document.querySelector('#submitBtn');
+var userInitials = document.querySelector("#fname");
+var value;
 var getUserRepos = function () {
+
+userInitials.setAttribute("id","idk");
+
+
+
+value = document.querySelector("#idk").value;
+
     // // format the github api url
-
+    // x = document.createElement("INPUT");
+    // x.setAttribute("type", "text");
+    // quoteContainer.appendChild(x);
+    // quoteContainer.setAttribute("class", "quote-container");
+    // x.setAttribute("class", "xxx");
+    //x.setAttribute("id", "xxx");
     // https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
-
+    //"+ userInitials +"
     // make a request to the url
+    var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q="+ value +"&appid=6665733097ff1de29ed2779c3bf3ce43";
     fetch(apiUrl)
         .then(function (response) {
             // request was successful
@@ -32,7 +51,7 @@ var getUserRepos = function () {
                     console.log(data)
                     cityLat = data.coord.lat;
                     cityLon = data.coord.lon;
-                   apiUrl2 = "https://api.openweathermap.org/data/2.5/weather?lat=" + cityLat + "&lon=" + cityLon + "&appid=6665733097ff1de29ed2779c3bf3ce43";
+                    apiUrl2 = "https://api.openweathermap.org/data/2.5/weather?lat=" + cityLat + "&lon=" + cityLon + "&appid=6665733097ff1de29ed2779c3bf3ce43";
                     fetch(apiUrl2)
                         .then(function (response) {
                             // request was successful
@@ -45,7 +64,7 @@ var getUserRepos = function () {
                                     humidity = data.main.humidity;
                                     windspeed = data.wind.speed;
                                     weatherIcon = data.weather.icon;
-                                    
+
                                     var apiUrl3 = "https://api.openweathermap.org/data/2.5/onecall?lat=" + cityLat + "&lon=" + cityLon + "&appid=6665733097ff1de29ed2779c3bf3ce43";
                                     fetch(apiUrl3)
                                         .then(function (response) {
@@ -54,6 +73,10 @@ var getUserRepos = function () {
                                                 response.json().then(function (data) {
                                                     console.log(data);
                                                     uvIndex = data.current.uvi;
+                                                    console.log(uvIndex);
+                                                    for (var i = 1; i < 6; i++) {
+                                                        myArray[i] = data.daily[i];
+                                                    }
                                                     testFunction();
                                                 });
 
@@ -80,6 +103,10 @@ var getUserRepos = function () {
 };
 
 var testFunction = function () {
+    // console.log("asdasdasdasdasdasdasd"+temp);
+
+    
+
     console.log(cityName);
     var current_datetime = new Date(1970, 0, 1); // Epoch
     current_datetime.setSeconds(date);
@@ -95,11 +122,59 @@ var testFunction = function () {
     // console.log(weatherIcon);
     console.log(uvIndex);
 
-    myCity.innerHTML = cityName + "  (" + formatted_date +")" ;
+    myCity.innerHTML = cityName + "  (" + formatted_date + ")";
     htmlWind.innerHTML = "Wind: " + windspeed + " MPH";
     htmlTemp.innerHTML = "Temp: " + F + "&#8457";
-    htmlHumidity.innerHTML = "Humidity: "+humidity+" %";
+    htmlHumidity.innerHTML = "Humidity: " + humidity + " %";
     htmlUv.innerHTML = "UV Index : " + uvIndex;
+
+
+    if (uvIndex < 2) {
+        htmlUv.setAttribute("class", "uvIndexGreen");
+    }
+    if (uvIndex > 2 && uvIndex < 5) {
+        htmlUv.setAttribute("class", "uvIndexYellow");
+    }
+    if (uvIndex > 5 && uvIndex < 10) {
+        htmlUv.setAttribute("class", "uvIndexRed");
+    }
+    for (var i = 1; i < 6; i++) {
+        
+        console.log(myArray[i]);
+        div = document.createElement("div");
+        div.setAttribute("class", "five-day");
+        div.setAttribute("id", "five-day");
+        var p1 = document.createElement("h2");
+        var current_datetime = new Date(1970, 0, 1); // Epoch
+        current_datetime.setSeconds(myArray[i].dt);
+        let formatted_date = (current_datetime.getMonth() + 1) + "/" + (current_datetime.getDate()) + "/" + current_datetime.getFullYear()
+        // console.log(formatted_date)
+        p1.innerHTML = formatted_date;
+        div.appendChild(p1);
+
+        var p5 = document.createElement("img");
+        p5.setAttribute("src","http://openweathermap.org/img/wn/"+myArray[i].weather[0].icon+".png");
+        div.appendChild(p5);
+
+        var p2 = document.createElement("h3");
+        var F = 1.8 * (myArray[i].temp.day - 273) + 32;
+        F = parseFloat(F).toFixed(2)
+        p2.innerHTML = "Temp: " + F + "&#8457";
+        div.appendChild(p2);
+
+        var p3 = document.createElement("h3");
+        p3.innerHTML = "Wind: "+ myArray[i].wind_speed + "MPH";
+        div.appendChild(p3);
+
+        var p4 = document.createElement("h3");
+        p4.innerHTML = "Humidity: "+ myArray[i].humidity + "%";
+        div.appendChild(p4);
+
+        displayFuture.appendChild(div);
+    }
+
 }
-getUserRepos();
+
+submitBtn.addEventListener("click", getUserRepos);
+
 

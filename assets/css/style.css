@@ -25,8 +25,9 @@ header{
 
 .search-city{
     /* display: flex; */
-    display: inline-grid;
+    display: grid;
     padding: 3%;
+    margin-bottom: 30%;
     
 }
 
@@ -39,6 +40,8 @@ header{
 
 .top-city{
 margin: 2%;
+background-color: cornflowerblue;
+
 
 }
 .container-2{
@@ -58,4 +61,38 @@ width: 100%;
 
 }
 
+
+.display-future{
+    display: flex;
+    border-style: solid;
+    height: 350px;
+    width: 100%;
+    
+    }
+.uvIndexGreen{
+    background-color: green;
+    width: 13%;
+}
+
+
+.uvIndexYellow{
+    background-color: yellow;
+    width: 13%;
+}
+
+
+.uvIndexRed{
+    background-color: red;
+    width: 13%;
+}
+
+.five-day{
+    background-color: cornflowerblue;
+    height: 300px;
+    width: 150px;
+    margin: 2%;
+}
+.title{
+    display: block;
+}
 

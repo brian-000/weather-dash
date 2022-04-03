@@ -41,7 +41,7 @@ header{
     width: 100%;
 }
 
-.top-city{
+#top-city{
 margin-top: 2%;
 margin-bottom: 2%;
 width: 100%;
@@ -85,7 +85,11 @@ width: 100%;
     width: 13%;
 }
 
+.uvIndexOrange{
+    background-color: orange;
+    width: 13%;
 
+}
 .uvIndexRed{
     background-color: red;
     width: 13%;

@@ -5,6 +5,7 @@ var cityName;
 var date;
 var temp;
 var div;
+var tracker = 0;
 var humidity;
 var windspeed;
 var weatherIcon;
@@ -21,6 +22,8 @@ var myCity = document.querySelector('#myCity');
 var displayFuture = document.querySelector('#display-future');
 var submitBtn = document.querySelector('#submitBtn');
 var userInput = document.querySelector("#userInput");
+var city;
+var previousCity;
 var value;
 var storedCities = [];
 var getUserRepos = function () {
@@ -29,10 +32,20 @@ var getUserRepos = function () {
     while(elements.length > 0){
         elements[0].parentNode.removeChild(elements[0]);
     }
-    userInput.setAttribute("id", "userInput");
-    city = document.querySelector("#userInput").value;
+    if(tracker === 0){
+        console.log("if")
+        userInput.setAttribute("id", "userInput");
+         city = document.querySelector("#userInput").value;
+         tracker = 1;
+    }
+   
+    else{
+        console.log("else")
+        tracker=0;
+        city = previousCity;
+    }
 
-
+ 
     // make a request to the url
     var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=6665733097ff1de29ed2779c3bf3ce43";
     fetch(apiUrl)
@@ -40,7 +53,7 @@ var getUserRepos = function () {
             // request was successful
             if (response.ok) {
                 response.json().then(function (data) {
-                    console.log(data)
+                    //console.log(data)
                     cityLat = data.coord.lat;
                     cityLon = data.coord.lon;
                     apiUrl2 = "https://api.openweathermap.org/data/2.5/weather?lat=" + cityLat + "&lon=" + cityLon + "&appid=6665733097ff1de29ed2779c3bf3ce43";
@@ -49,7 +62,7 @@ var getUserRepos = function () {
                             // request was successful
                             if (response.ok) {
                                 response.json().then(function (data) {
-                                    console.log(data);
+                                   // console.log(data);
 
                                     cityName = data.name;
                                     date = data.dt + data.timezone;
@@ -64,9 +77,9 @@ var getUserRepos = function () {
                                             // request was successful
                                             if (response.ok) {
                                                 response.json().then(function (data) {
-                                                    console.log(data);
+                                                   // console.log(data);
                                                     uvIndex = data.current.uvi;
-                                                    console.log(uvIndex);
+                                                    // console.log(uvIndex);
                                                     for (var i = 1; i < 6; i++) {
                                                         myArray[i] = data.daily[i];
                                                     }
@@ -99,20 +112,28 @@ var getUserRepos = function () {
 
 var testFunction = function () {
     // console.log("asdasdasdasdasdasdasd"+temp);
-    storedCities.push(cityName);
-    console.log(storedCities);
+    // storedCities = [];
+    if(tracker === 1){
+        storedCities.push(cityName);
+        tracker = 0;
+        
+    }
+
+    localStorage.setItem("storedCities", JSON.stringify(storedCities));
+
+    // console.log(storedCities);
     var current_datetime = new Date(1970, 0, 1); // Epoch
     current_datetime.setSeconds(date);
     let formatted_date = (current_datetime.getMonth() + 1) + "/" + (current_datetime.getDate()) + "/" + current_datetime.getFullYear()
-    console.log(formatted_date)
+    // console.log(formatted_date)
     var F = 1.8 * (temp - 273) + 32;
     F = parseFloat(F).toFixed(2)
-    console.log(F + "F");
+    // console.log(F + "F");
 
-    console.log(humidity);
-    console.log(windspeed);
+    // console.log(humidity);
+    // console.log(windspeed);
     // console.log(weatherIcon);
-    console.log(uvIndex);
+    // console.log(uvIndex);
     myCity.innerHTML = cityName + "  (" + formatted_date + ")";
     htmlWind.innerHTML = "Wind: " + windspeed + " MPH";
     htmlTemp.innerHTML = "Temp: " + F + "&#8457";
@@ -127,11 +148,14 @@ var testFunction = function () {
         htmlUv.setAttribute("class", "uvIndexYellow");
     }
     if (uvIndex > 5 && uvIndex < 10) {
+        htmlUv.setAttribute("class", "uvIndexOrange");
+    }
+    if(uvIndex > 10){
         htmlUv.setAttribute("class", "uvIndexRed");
     }
     for (var i = 1; i < 6; i++) {
 
-        console.log(myArray[i]);
+        // console.log(myArray[i]);
         div = document.createElement("div");
         div.setAttribute("class", "five-day");
         div.setAttribute("id", "five-day");
@@ -170,14 +194,22 @@ var testFunction = function () {
     while(elements.length > 0){
         elements[0].parentNode.removeChild(elements[0]);
     }
+
     for (var i = 0; i < storedCities.length; i++) {
         button1 = document.createElement("div");
         button1.innerHTML = storedCities[i];
-        button1.setAttribute("class", "top-city");
+        button1.setAttribute("class", "top-city top-city-"+i);
+        button1.setAttribute("onClick", "historyClick(this.getAttribute('class'))");
+        button1.setAttribute("id", "top-city");
         searchForm.appendChild(button1);
-
-        
     }
+
+}
+var historyClick = function(className){
+    // console.log(className);
+    previousCity = document.getElementsByClassName(className)[0].innerText
+    tracker = 1;
+    getUserRepos();
 
 }
 
@@ -185,11 +217,13 @@ var testFunction = function () {
 submitBtn.addEventListener("click", getUserRepos);
 
 
-// button1.addEventListener("click", myFunc);
-// var myFunc = function(){
-//     button1.getAttribute("class");
-//     console.log(button1.innerHTML);
 
-// }
+
+//set button class
+// i have a button
+// on click get its class
+// then get inner html 
+//set equals to city
+//call api with city name
 
 

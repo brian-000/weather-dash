@@ -196,7 +196,7 @@ var testFunction = function () {
     }
 
     for (var i = 0; i < storedCities.length; i++) {
-        button1 = document.createElement("div");
+        button1 = document.createElement("button");
         button1.innerHTML = storedCities[i];
         button1.setAttribute("class", "top-city top-city-"+i);
         button1.setAttribute("onClick", "historyClick(this.getAttribute('class'))");
